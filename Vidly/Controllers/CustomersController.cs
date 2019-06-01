@@ -29,11 +29,16 @@ namespace Vidly.Controllers
             return View(viewModel);
         }
 
-        public ActionResult ViewCustomer(int id)
+        public ActionResult Details(int id)
         {
-            var customerName = customers.Find(x => x.Id == id).Name;
+            if (customers.Find(x => x.Id == id) != null)
+            {
+                var customer = customers.Find(x => x.Id == id);
 
-            return View(customerName);
+                return View(customer);
+            }
+
+            return HttpNotFound();
         }
     }
 }
