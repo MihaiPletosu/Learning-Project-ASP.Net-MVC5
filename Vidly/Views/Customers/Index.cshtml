@@ -31,9 +31,9 @@
                             <th>Delete</th>
                         </tr>
                     </thead>
-                    @foreach (var customer in Model)
-                    {
-                        <tbody>
+                    <tbody>
+                        @foreach (var customer in Model)
+                        {
                             <tr>
                                 <td>
                                     @Html.ActionLink(customer.Name, "Edit", "Customers", new { id = customer.Id }, null)
@@ -45,8 +45,8 @@
                                     <button data-customer-id="@customer.Id" class="btn-link js-delete">Delete</button>
                                 </td>
                             </tr>
-                        </tbody>
-                    }
+                        }
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -56,6 +56,9 @@
 {
     <script>
         $(document).ready(function () {
+            $('#customers').DataTable();
+            $('#customers_wrapper').removeClass('form-inline');
+
             $('#customers').on('click', ".js-delete", function () {
                 var button = $(this);
 
