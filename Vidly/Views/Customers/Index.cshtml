@@ -6,57 +6,53 @@
 
 
 <div class="container">
-    @if (!Model.Any())
-    {
-        <div class="row">
-            <div class="col-12">
-                <p>We don't have any customers.</p>
-            </div>
+    <div class="row">
+        <div class="col-12">
+            <h2>Customers</h2>
         </div>
-    }
-    else
-    {
-        <div class="row">
-            <div class="col-12">
-                <h2>Customers</h2>
-            </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <table id="customers" class="table table-bordered table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Customer</th>
+                        <th>Membership Type</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
-        <div class="row">
-            <div class="col-12">
-                <table id="customers" class="table table-bordered table-hover">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Customer</th>
-                            <th>Membership Type</th>
-                            <th>Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var customer in Model)
-                        {
-                            <tr>
-                                <td>
-                                    @Html.ActionLink(customer.Name, "Edit", "Customers", new { id = customer.Id }, null)
-                                </td>
-                                <td>
-                                    @customer.MembershipType.Name
-                                </td>
-                                <td>
-                                    <button data-customer-id="@customer.Id" class="btn-link js-delete">Delete</button>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    }
+    </div>
 </div>
 @section scripts
 {
     <script>
         $(document).ready(function () {
-            $('#customers').DataTable();
+            $('#customers').DataTable({
+                ajax: {
+                    url: "/api/customers",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "name",
+                        render: function (data, type, customer) {
+                            return "<a href='/customers/edit/" + customer.id + "'>" + customer.name + "</a>";
+                        }
+                    },
+                    {
+                        data: "name"
+                    },
+                    {
+                        data: "id",
+                        render: function (data) {
+                            return "<button class='btn-link js-delete' data-customer-id=" + data + ">Delete</button>";
+                        }
+                    }
+                ]
+            });
             $('#customers_wrapper').removeClass('form-inline');
 
             $('#customers').on('click', ".js-delete", function () {
