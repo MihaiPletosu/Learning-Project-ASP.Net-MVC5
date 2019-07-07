@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -20,9 +21,14 @@ namespace Vidly.Controllers.Api
         }
 
         // GET /api/movies
-        public IEnumerable<MovieDto> GetMovies()
+        public IHttpActionResult GetMovies()
         {
-            return _context.Movies.ToList().Select(Mapper.Map<Movie, MovieDto>);
+            var movieDto = _context.Movies
+                .Include(m => m.Genre)
+                .ToList()
+                .Select(Mapper.Map<Movie, MovieDto>);
+
+            return Ok(movieDto);
         }
 
         // GET /api/movies/1
@@ -44,20 +50,15 @@ namespace Vidly.Controllers.Api
         [HttpPost]
         public IHttpActionResult CreateMovie(MovieDto movieDto)
         {
-            if (!ModelState.IsValid)
-            {
+           if (!ModelState.IsValid)
                 return BadRequest();
-            }
-            else
-            {
-                var movie = Mapper.Map<MovieDto, Movie>(movieDto);
-                _context.Movies.Add(movie);
-                _context.SaveChanges();
 
-                movieDto.Id = movie.Id;
+            var movie = Mapper.Map<MovieDto, Movie>(movieDto);
+            _context.Movies.Add(movie);
+            _context.SaveChanges();
 
-                return Created(new Uri(Request.RequestUri + "/" + movie.Id), movieDto);
-            }
+            movieDto.Id = movie.Id;
+            return Created(new Uri(Request.RequestUri + "/" + movie.Id), movieDto);
         }
 
         // PUT /api/movies/1
